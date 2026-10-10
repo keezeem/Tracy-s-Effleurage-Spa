@@ -1,0 +1,100 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ------------------------------------------------------------------
+   BRAND THEME — edit these RGB triplets to re-colour the entire site.
+   (Starting-point palette, not confirmed brand colours.)
+------------------------------------------------------------------- */
+:root {
+  --c-espresso: 33 25 20;     /* #211914 */
+  --c-chocolate: 56 39 31;    /* #38271F */
+  --c-ivory: 247 241 232;     /* #F7F1E8 */
+  --c-champagne: 216 183 124; /* #D8B77C */
+  --c-botanical: 105 116 92;  /* #69745C */
+  --c-beige: 232 220 205;     /* #E8DCCD */
+}
+
+@layer base {
+  html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+  body {
+    @apply bg-ivory font-sans text-espresso antialiased;
+    overflow-x: hidden;
+    font-size: 1.0625rem;
+    line-height: 1.7;
+  }
+  h1, h2, h3, h4 { @apply font-display font-normal tracking-tight; line-height: 1.04; }
+  ::selection { background: rgb(var(--c-champagne) / 0.45); }
+
+  /* Visible keyboard focus everywhere */
+  :focus-visible {
+    outline: 2px solid rgb(var(--c-champagne));
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+  /* On light backgrounds the gold ring is weak, so darken it there */
+  .on-light :focus-visible { outline-color: rgb(var(--c-chocolate)); }
+}
+
+@layer components {
+  .container-x { @apply mx-auto w-full max-w-[1320px] px-5 sm:px-8 lg:px-12; }
+  .section-y { padding-block: clamp(4.5rem, 10vw, 9rem); }
+  .display-xl { font-size: clamp(3.1rem, 9.5vw, 8.5rem); line-height: 0.96; letter-spacing: -0.02em; }
+  .display-lg { font-size: clamp(2.4rem, 5.6vw, 5rem); line-height: 1; letter-spacing: -0.015em; }
+  .display-md { font-size: clamp(1.8rem, 3.2vw, 2.9rem); line-height: 1.08; }
+  .prose-body { max-width: 62ch; }
+  .field {
+    @apply w-full rounded-none border-0 border-b border-chocolate/40 bg-transparent px-0 py-3 text-espresso placeholder:text-chocolate/45;
+    transition: border-color 0.25s ease;
+  }
+  .field:focus { outline: none; border-color: rgb(var(--c-chocolate)); box-shadow: 0 1px 0 0 rgb(var(--c-chocolate)); }
+  .field[aria-invalid="true"] { border-color: #9b2c2c; }
+}
+
+/* Soft film grain over dark sections (CSS-only, very light) */
+.grain::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none; opacity: 0.06; mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+
+/* ---------------- Hero "breathing" light ---------------- */
+@keyframes breathe {
+  0%, 100% { opacity: 0.55; transform: scale(1); }
+  50% { opacity: 0.85; transform: scale(1.08); }
+}
+.breathe { animation: breathe 9s ease-in-out infinite; }
+
+@keyframes drift {
+  0% { transform: translate3d(0, 0, 0); }
+  50% { transform: translate3d(3%, -2%, 0); }
+  100% { transform: translate3d(0, 0, 0); }
+}
+.drift { animation: drift 24s ease-in-out infinite; }
+
+@keyframes scroll-cue {
+  0% { transform: translateY(-100%); }
+  60%, 100% { transform: translateY(100%); }
+}
+.scroll-cue { animation: scroll-cue 2.4s cubic-bezier(0.22, 1, 0.36, 1) infinite; }
+
+/* ---------------- Custom cursor (desktop fine-pointer only) ----------------
+   The native cursor is hidden ONLY when JS adds .has-custom-cursor, and it is
+   always restored over form fields, so usability is never reduced. */
+html.has-custom-cursor, html.has-custom-cursor a, html.has-custom-cursor button, html.has-custom-cursor [role="button"] { cursor: none; }
+html.has-custom-cursor input, html.has-custom-cursor textarea, html.has-custom-cursor select { cursor: text; }
+html.has-custom-cursor [data-native-cursor], html.has-custom-cursor [data-native-cursor] * { cursor: auto; }
+
+@media (hover: none), (pointer: coarse) {
+  .cursor-layer, .glow-layer { display: none !important; }
+}
+
+/* ---------------- Reduced motion ---------------- */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+  .glow-layer, .cursor-layer { display: none !important; }
+}
